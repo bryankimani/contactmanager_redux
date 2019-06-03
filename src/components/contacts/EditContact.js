@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import TextInputGroup from '../layouts/TextInputGroup';
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { getContact, updateContact } from '../../actions/contactActions';
 
 class EditContact extends Component {
     state = {
@@ -9,17 +12,26 @@ class EditContact extends Component {
         errors: {} 
     };
 
-    componentDidMount(){
-        
+    componentDidMount() {
+      const { id } = this.props.match.params;
+      this.props.getContact(id);
     }
 
+    componentWillReceiveProps(nextProps, nextState) {
+      const { name, email, phone } = nextProps.contact;
+      this.setState({
+        name,
+        email,
+        phone
+      });
+    }
     onChange = e => this.setState({ 
       // e.target.name references the name 
       // attribute of each input type
       [e.target.name]: e.target.value
     });
 
-    onSubmit = async (dispatch, e) => {
+    onSubmit = e => {
       e.preventDefault();
       const {name, email, phone} = this.state;
 
@@ -38,9 +50,17 @@ class EditContact extends Component {
         this.setState({ errors: { phone: 'Phone number is required' }});
         return;
       }
+      const { id } = this.props.match.params;
 
-  
+      const updContact = {
+        id,
+        name,
+        email,
+        phone
+      };
       
+      this.props.updateContact(updContact);
+
       // Clear state
       this.setState({
         name: '',
@@ -95,4 +115,14 @@ class EditContact extends Component {
   }
 }
 
-export default EditContact;
+EditContact.protoTypes = {
+  contact: PropTypes.object.isRequired,
+  getContact: PropTypes.func.isRequired,
+  updateContact: PropTypes.func.isRequired
+};
+
+const mapStateToProps = state => ({
+  contact: state.contact.contact
+});
+
+export default connect(mapStateToProps, { getContact, updateContact })(EditContact);

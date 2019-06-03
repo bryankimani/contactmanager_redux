@@ -6,12 +6,17 @@ import EditContact from './components/contacts/EditContact';
 import Header from './components/layouts/Header';
 import About from './components/pages/About';
 import NotFound from './components/pages/NotFound';
+
+import { Provider } from 'react-redux';
+import store from './store';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 export class App extends Component {
   render() {
     return (
+      <Provider store={store}>
         <Router>
           <div className = "App">
             <Header branding="Contact Manager" />
@@ -26,6 +31,7 @@ export class App extends Component {
             </div>
           </div> 
         </Router>
+      </Provider>
     );
   }
 }

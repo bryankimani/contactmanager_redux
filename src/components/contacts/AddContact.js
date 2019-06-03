@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import TextInputGroup from '../layouts/TextInputGroup';
-import axios from 'axios';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { addContact } from '../../actions/contactActions';
 
 class AddContact extends Component {
     state = {
@@ -16,7 +18,7 @@ class AddContact extends Component {
       [e.target.name]: e.target.value
     });
 
-    onSubmit = async (dispatch, e) => {
+    onSubmit = (e) => {
       e.preventDefault();
       const {name, email, phone} = this.state;
       // check for errors
@@ -41,10 +43,9 @@ class AddContact extends Component {
         email,
         phone
       }
-      
-     const  res = await axios.post('https://jsonplaceholder.typicode.com/users', newContact);
-      dispatch({type: 'ADD_CONTACT', payload: res.data });                  
-      
+             
+      this.props.addContact(newContact);
+
       // Clear state
       this.setState({
         name: '',
@@ -99,4 +100,7 @@ class AddContact extends Component {
   }
 }
 
-export default AddContact;
+AddContact.propTypes = {
+  addContact: PropTypes.func.isRequired
+}
+export default connect(null, { addContact })(AddContact);
